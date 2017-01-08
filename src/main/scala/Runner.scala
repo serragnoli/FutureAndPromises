@@ -1,16 +1,12 @@
-import java.io.{File, FileOutputStream, PrintWriter}
-
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
-/**
-  * Created by tvsdev on 07/01/2017.
-  */
 object Runner {
+  implicit val ec: ExecutionContextExecutor = ExecutionContext.global
+
   def main(args: Array[String]): Unit = {
-    implicit val ec = ExecutionContext.global
     val Session: Session = new Session
 
     Session.getFriendsFor(171) onComplete {
@@ -33,7 +29,8 @@ object Runner {
 }
 
 class Session {
-  private val NetworkLatency: Long = 3.seconds.toMillis
+  implicit val ec: ExecutionContextExecutor = ExecutionContext.global
+  private val NetworkLatency: Long = 2.seconds.toMillis
   private val Facebook: Facebook = new Facebook
 
   private def considerNetworkLatency(): Unit = {
@@ -55,8 +52,8 @@ class Session {
 
 class Facebook {
   def getFriends(userId: Long): List[Friend] = {
-    val karen = Friend(firstName = "Karen", surname = "Lopes")
-    val isabella = Friend("Isabella")
+    val karen = Friend(firstName = "Mary", surname = "Terry")
+    val isabella = Friend("Jenny")
 
     List[Friend](new Friend, karen, isabella)
   }
@@ -66,5 +63,5 @@ class Facebook {
   }
 }
 
-case class Friend(firstName: String = "Fabio", surname: String = "Serragnoli")
+case class Friend(firstName: String = "John", surname: String = "Smith")
 
